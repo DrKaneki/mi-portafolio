@@ -3,27 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Portafolio Profesional</title>
+  <title>Portafolio de José Manuel</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: "Segoe UI", sans-serif;
     }
 
     body {
-      background-color: #f4f4f4;
-      color: #333;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* FONDO CON EFECTO RGB INTERACTIVO */
+    .fondo-rgb {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.2), transparent 60%),
+                  radial-gradient(circle at 80% 20%, rgba(0,128,255,0.15), transparent 60%),
+                  radial-gradient(circle at 20% 80%, rgba(255,0,255,0.15), transparent 60%);
+      filter: blur(80px);
+      transition: background-position 0.2s ease-out;
     }
 
     header {
-      background-color: #1e1e2f;
+      background: linear-gradient(90deg, #111122, #181830);
       color: white;
-      padding: 20px 40px;
+      padding: 20px 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    header h1 {
+      font-size: 1.5em;
+      letter-spacing: 1px;
     }
 
     .foto-perfil {
@@ -31,79 +59,153 @@
       height: 80px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid white;
+      border: 3px solid #00ffffa8;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
     }
 
     nav {
-      background-color: #333;
+      background-color: #141426;
       display: flex;
       justify-content: center;
       gap: 20px;
-      padding: 10px;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 100px;
+      z-index: 9;
     }
 
     nav button {
-      background-color: #4a4a6a;
-      color: white;
+      background: linear-gradient(90deg, #1e1e2f, #29294a);
+      color: #00ffff;
       border: none;
       padding: 10px 20px;
-      cursor: pointer;
       border-radius: 8px;
+      cursor: pointer;
       transition: 0.3s;
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
     }
 
     nav button:hover {
-      background-color: #6b6ba4;
+      background: linear-gradient(90deg, #29294a, #3a3a6a);
+      color: white;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
     }
 
     section {
-      padding: 40px;
+      padding: 60px;
       display: none;
+      animation: fadeIn 0.6s ease-in-out;
     }
 
     section.active {
       display: block;
     }
 
-    .descargar {
-      margin-top: 20px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      color: #00ffff;
+      border-left: 4px solid #00ffff;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+
+    p, li {
+      line-height: 1.6;
+    }
+
+    ul li {
+      margin: 8px 0;
+    }
+
+    a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     .descargar a {
-      background-color: #1e1e2f;
+      background-color: #00bcd4;
       color: white;
       padding: 10px 20px;
-      text-decoration: none;
       border-radius: 6px;
       display: inline-block;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+
+    .descargar a:hover {
+      background-color: #0097a7;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+    }
+
+    form input, form textarea, form button {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    form input, form textarea {
+      background-color: #1e1e2f;
+      color: white;
+    }
+
+    form button {
+      background: linear-gradient(90deg, #00ffff, #0077ff);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    form button:hover {
+      background: linear-gradient(90deg, #0077ff, #00ffff);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
     }
 
     footer {
-      background-color: #1e1e2f;
-      color: white;
+      background-color: #101020;
       text-align: center;
       padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ccc;
     }
   </style>
 </head>
 <body>
+  <div class="fondo-rgb" id="fondo"></div>
+
   <header>
-    <div>
-      <h1>José Manuel - Desarrollador Informático</h1>
-    </div>
-    <img src="css/foto.jpg" alt="Mi Foto" class="foto-perfil">
+    <h1>José Manuel — Desarrollador Informático</h1>
+    <img src="css/foto.jpg" alt="Foto de perfil" class="foto-perfil">
   </header>
 
   <nav>
     <button onclick="mostrarSeccion('curriculum')">Currículum</button>
     <button onclick="mostrarSeccion('sobreMi')">Sobre Mí</button>
     <button onclick="mostrarSeccion('proyectos')">Proyectos</button>
+    <button onclick="mostrarSeccion('certificados')">Certificados</button>
     <button onclick="mostrarSeccion('contacto')">Contacto</button>
   </nav>
 
   <section id="curriculum" class="active">
-    <h2>Mi Currículum</h2>
-    <p>Aquí puedes ver y descargar mi currículum profesional actualizado.</p>
+    <h2>Currículum</h2>
+    <p>Puedes descargar mi currículum profesional actualizado en formato PDF.</p>
     <div class="descargar">
       <a href="css/José Manuel Garriazo Auccasi.pdf" download>Descargar Currículum (PDF)</a>
     </div>
@@ -111,25 +213,36 @@
 
   <section id="sobreMi">
     <h2>Sobre Mí</h2>
-    <p>Soy un profesional en informática con experiencia en desarrollo web, software y soporte técnico.</p>
+    <p>Soy un desarrollador informático con pasión por la tecnología, la innovación y el diseño funcional. Tengo experiencia en desarrollo web, soporte técnico y gestión de proyectos digitales.</p>
+    <p>Busco ofrecer soluciones creativas y eficientes, combinando estética, seguridad y rendimiento. Mi meta es crecer profesionalmente en entornos donde pueda seguir aprendiendo y aportar valor.</p>
   </section>
 
   <section id="proyectos">
     <h2>Proyectos</h2>
     <ul>
-      <li>✔️ Sistema de gestión académica</li>
-      <li>✔️ Página web para empresa local</li>
-      <li>✔️ Aplicación móvil para control de inventario</li>
+      <li>✔️ Sistema de Gestión Académica para instituciones educativas.</li>
+      <li>✔️ Página web moderna para una empresa local.</li>
+      <li>✔️ Aplicación móvil para control de inventario empresarial.</li>
+    </ul>
+  </section>
+
+  <section id="certificados">
+    <h2>Certificados</h2>
+    <p>A continuación puedes acceder a mis certificados profesionales:</p>
+    <ul>
+      <li><a href="#" target="_blank">🔗 Certificado 1 - [Tu link aquí]</a></li>
+      <li><a href="#" target="_blank">🔗 Certificado 2 - [Tu link aquí]</a></li>
+      <li><a href="#" target="_blank">🔗 Certificado 3 - [Tu link aquí]</a></li>
     </ul>
   </section>
 
   <section id="contacto">
     <h2>Contacto</h2>
-    <p>Puedes escribirme a través del siguiente formulario:</p>
+    <p>Si deseas colaborar o solicitar más información, puedes escribirme directamente:</p>
     <form>
-      <label>Nombre:<br><input type="text"></label><br><br>
-      <label>Email:<br><input type="email"></label><br><br>
-      <label>Mensaje:<br><textarea rows="4"></textarea></label><br><br>
+      <input type="text" placeholder="Tu nombre" required>
+      <input type="email" placeholder="Tu correo" required>
+      <textarea rows="4" placeholder="Tu mensaje" required></textarea>
       <button type="submit">Enviar</button>
     </form>
   </section>
@@ -139,12 +252,25 @@
   </footer>
 
   <script>
+    // Cambiar secciones
     function mostrarSeccion(id) {
-      document.querySelectorAll('section').forEach(section => {
-        section.classList.remove('active');
+      document.querySelectorAll("section").forEach(section => {
+        section.classList.remove("active");
       });
-      document.getElementById(id).classList.add('active');
+      document.getElementById(id).classList.add("active");
     }
+
+    // Fondo interactivo RGB que sigue el cursor
+    const fondo = document.getElementById("fondo");
+    document.addEventListener("mousemove", e => {
+      const x = e.clientX / window.innerWidth * 100;
+      const y = e.clientY / window.innerHeight * 100;
+      fondo.style.background = `
+        radial-gradient(circle at ${x}% ${y}%, rgba(0,255,255,0.2), transparent 60%),
+        radial-gradient(circle at ${100 - x}% ${y}%, rgba(0,128,255,0.15), transparent 60%),
+        radial-gradient(circle at ${x / 2}% ${100 - y}%, rgba(255,0,255,0.15), transparent 60%)
+      `;
+    });
   </script>
 </body>
 </html>
