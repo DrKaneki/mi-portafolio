@@ -1,276 +1,378 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portafolio de José Manuel</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portafolio — Manuel Garriazo</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", sans-serif;
+    /* ====================== RESET & BASE ====================== */
+    :root{
+      --accent: #00aaff;
+      --bg-1: #030416;
+      --bg-2: #000;
+      --glass: rgba(255,255,255,0.05);
+      --glass-border: rgba(0,160,255,0.18);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter, "Segoe UI", Roboto, system-ui, -apple-system;}
+    html,body{height:100%}
+    body{
+      min-height:100vh;
+      background:linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color:#e8eef6;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    body {
-      background: #0a0a0f;
-      color: #e0e0e0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
+    /* ====================== CANVAS BG (luces que siguen cursor) ====================== */
+    canvas#bgCanvas{
+      position:fixed;inset:0;width:100%;height:100%;z-index:-3;display:block;
+      background: radial-gradient(600px at var(--cx,50%) var(--cy,50%), rgba(0,160,255,0.12), transparent 60%);
+      filter: blur(40px) contrast(1.05) saturate(1.05);
+      transition: background 0.12s linear;
     }
 
-    /* FONDO CON EFECTO RGB INTERACTIVO */
-    .fondo-rgb {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.2), transparent 60%),
-                  radial-gradient(circle at 80% 20%, rgba(0,128,255,0.15), transparent 60%),
-                  radial-gradient(circle at 20% 80%, rgba(255,0,255,0.15), transparent 60%);
-      filter: blur(80px);
-      transition: background-position 0.2s ease-out;
+    /* subtle overlay to keep readability */
+    .overlay-dark{
+      position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.20),rgba(0,0,0,0.45));z-index:-2;
     }
 
-    header {
-      background: linear-gradient(90deg, #111122, #181830);
-      color: white;
-      padding: 20px 50px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-bottom: 2px solid rgba(0, 255, 255, 0.2);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    /* ====================== HEADER / NAVBAR (FIJO) ====================== */
+    header{
+      position:fixed;top:0;left:0;width:100%;z-index:50;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 28px;
+      background: linear-gradient(180deg, rgba(0,5,20,0.6), rgba(0,5,20,0.45));
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid var(--glass-border);
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand .avatar{
+      width:52px;height:52px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);
+      box-shadow:0 6px 18px rgba(0,160,255,0.08);
+    }
+    .brand h1{font-size:1.05rem;color:var(--accent);letter-spacing:0.6px}
+    nav{display:flex;gap:14px;align-items:center}
+    nav a{
+      color: #dfefff;text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600;
+      transition:all .18s ease;
+    }
+    nav a:hover{color:#fff;background:linear-gradient(90deg, rgba(0,160,255,0.06), rgba(0,160,255,0.03));box-shadow:0 6px 18px rgba(0,160,255,0.06)}
+    .cta-cert{border:1px solid rgba(0,160,255,0.18);color:var(--accent);padding:8px 12px;border-radius:8px;font-weight:700}
+
+    /* MOBILE NAV small spacing */
+    @media (max-width:760px){
+      header{padding:10px 14px}
+      nav{gap:8px}
+      .brand h1{font-size:0.95rem}
     }
 
-    header h1 {
-      font-size: 1.5em;
-      letter-spacing: 1px;
+    /* ====================== MAIN LAYOUT ====================== */
+    main{padding:110px 28px 60px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:28px}
+    .glass{
+      background:var(--glass);
+      border:1px solid var(--glass-border);
+      backdrop-filter: blur(12px) saturate(1.05);
+      padding:28px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);
     }
 
-    .foto-perfil {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #00ffffa8;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    /* ====================== HERO / PROFILE ====================== */
+    .hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+    .hero-left{flex:1;min-width:260px}
+    .hero-right{width:220px;min-width:180px;display:flex;justify-content:center;align-items:center}
+    .profile-pic{width:180px;height:180px;border-radius:18px;overflow:hidden;border:3px solid var(--accent);box-shadow:0 20px 50px rgba(0,160,255,0.08)}
+    .hero-left h2{color:var(--accent);font-size:1.6rem;margin-bottom:8px}
+    .typing{color:#dff4ff;font-weight:600;height:26px;margin-bottom:14px}
+    .intro{color:#d1dceb;line-height:1.6}
+
+    /* small screens */
+    @media (max-width:900px){
+      .hero{flex-direction:column;align-items:flex-start}
+      .hero-right{width:100%;display:flex;justify-content:flex-start}
+      .profile-pic{width:140px;height:140px;border-radius:12px}
     }
 
-    nav {
-      background-color: #141426;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      position: sticky;
-      top: 100px;
-      z-index: 9;
+    /* ====================== SECTIONS ====================== */
+    .section-title{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .section-title h3{color:var(--accent);text-transform:uppercase;font-size:0.9rem;border-left:5px solid var(--accent);padding-left:10px}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .project-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);transition:transform .18s,box-shadow .18s}
+    .project-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,160,255,0.06)}
+    .project-card h4{color:#e8f7ff;margin-bottom:8px}
+    .project-card p{color:#cbdaf0;font-size:0.95rem;line-height:1.5}
+
+    /* CERTIFICATES */
+    .cert-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+    .cert{padding:14px;border-radius:10px;background:rgba(0,20,40,0.45);border:1px solid rgba(0,160,255,0.12);text-align:center}
+    .cert a{display:inline-block;margin-top:10px;padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#005f9e);color:#fff;text-decoration:none;font-weight:700}
+
+    /* CONTACT */
+    .contact-grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .contact-form input,.contact-form textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#e8eef6}
+    .contact-form button{background:linear-gradient(90deg,var(--accent),#0068b3);color:#001;padding:10px 16px;border:none;border-radius:10px;font-weight:800;cursor:pointer}
+
+    @media (max-width:900px){
+      .contact-grid{grid-template-columns:1fr}
     }
 
-    nav button {
-      background: linear-gradient(90deg, #1e1e2f, #29294a);
-      color: #00ffff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
-    }
+    /* ====================== TYPING CURSOR ====================== */
+    .typing-cursor{display:inline-block;width:10px;height:20px;background:var(--accent);margin-left:6px;vertical-align:middle;animation:blink 1s steps(2) infinite}
+    @keyframes blink{50%{opacity:0}}
 
-    nav button:hover {
-      background: linear-gradient(90deg, #29294a, #3a3a6a);
-      color: white;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
-    }
+    /* ====================== FOOTER ====================== */
+    footer{padding:30px;text-align:center;color:#9fbfdb;margin-top:8px}
 
-    section {
-      padding: 60px;
-      display: none;
-      animation: fadeIn 0.6s ease-in-out;
-    }
+    /* ====================== SMALL ACCESSIBILITY & FOCUS ====================== */
+    a:focus,button:focus,input:focus,textarea:focus{outline:2px solid rgba(0,160,255,0.14);outline-offset:2px}
 
-    section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h2 {
-      color: #00ffff;
-      border-left: 4px solid #00ffff;
-      padding-left: 10px;
-      margin-bottom: 20px;
-    }
-
-    p, li {
-      line-height: 1.6;
-    }
-
-    ul li {
-      margin: 8px 0;
-    }
-
-    a {
-      color: #00ffff;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .descargar a {
-      background-color: #00bcd4;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 6px;
-      display: inline-block;
-      margin-top: 10px;
-      transition: 0.3s;
-    }
-
-    .descargar a:hover {
-      background-color: #0097a7;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-    }
-
-    form input, form textarea, form button {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-    }
-
-    form input, form textarea {
-      background-color: #1e1e2f;
-      color: white;
-    }
-
-    form button {
-      background: linear-gradient(90deg, #00ffff, #0077ff);
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    form button:hover {
-      background: linear-gradient(90deg, #0077ff, #00ffff);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
-    }
-
-    footer {
-      background-color: #101020;
-      text-align: center;
-      padding: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      color: #ccc;
-    }
   </style>
 </head>
 <body>
-  <div class="fondo-rgb" id="fondo"></div>
+  <!-- Canvas background for particle/wave lights -->
+  <canvas id="bgCanvas"></canvas>
+  <div class="overlay-dark"></div>
 
+  <!-- HEADER / NAVIGATION (fixed) -->
   <header>
-    <h1>José Manuel — Desarrollador Informático</h1>
-    <img src="css/foto.jpg" alt="Foto de perfil" class="foto-perfil">
+    <div class="brand">
+      <div class="avatar">
+        <!-- Replace src with your real photo path (local or hosted) -->
+        <img src="css/foto.jpg" alt="Manuel Garriazo" style="width:100%;height:100%;object-fit:cover">
+      </div>
+      <h1>Manuel Garriazo</h1>
+    </div>
+
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#proyectos">Proyectos</a>
+      <a class="cta-cert" href="#certificados">Certificados</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
   </header>
 
-  <nav>
-    <button onclick="mostrarSeccion('curriculum')">Currículum</button>
-    <button onclick="mostrarSeccion('sobreMi')">Sobre Mí</button>
-    <button onclick="mostrarSeccion('proyectos')">Proyectos</button>
-    <button onclick="mostrarSeccion('certificados')">Certificados</button>
-    <button onclick="mostrarSeccion('contacto')">Contacto</button>
-  </nav>
+  <!-- MAIN -->
+  <main>
+    <!-- HERO -->
+    <section id="inicio" class="glass hero">
+      <div class="hero-left">
+        <h2>Hola — soy <strong style="color:#fff">Manuel Garriazo</strong></h2>
+        <div class="typing" id="typing"></div>
+        <p class="intro">Desarrollador Informático — me enfoco en construir soluciones web robustas y visualmente elegantes. Me gusta combinar diseño, rendimiento y buenas prácticas para crear productos con impacto real.</p>
+      </div>
+      <div class="hero-right">
+        <div class="profile-pic">
+          <!-- Larger profile image -->
+          <img src="css/gyomei-himejima.jpeg" alt="Foto Manuel" style="width:100%;height:100%;object-fit:cover;border-radius:12px">
+        </div>
+      </div>
+    </section>
 
-  <section id="curriculum" class="active">
-    <h2>Currículum</h2>
-    <p>Puedes descargar mi currículum profesional actualizado en formato PDF.</p>
-    <div class="descargar">
-      <a href="css/José Manuel Garriazo Auccasi.pdf" download>Descargar Currículum (PDF)</a>
-    </div>
-  </section>
+    <!-- PROJECTS -->
+    <section id="proyectos" class="glass">
+      <div class="section-title"><h3>Proyectos</h3></div>
+      <div class="projects-grid">
+        <article class="project-card">
+          <h4>Sistema de Gestión Académica</h4>
+          <p>Control de notas, asistencia y reportes. Backend simple, panel administrativo y diseño responsivo.</p>
+        </article>
 
-  <section id="sobreMi">
-    <h2>Sobre Mí</h2>
-    <p>Soy un desarrollador informático con pasión por la tecnología, la innovación y el diseño funcional. Tengo experiencia en desarrollo web, soporte técnico y gestión de proyectos digitales.</p>
-    <p>Busco ofrecer soluciones creativas y eficientes, combinando estética, seguridad y rendimiento. Mi meta es crecer profesionalmente en entornos donde pueda seguir aprendiendo y aportar valor.</p>
-  </section>
+        <article class="project-card">
+          <h4>Página Web Empresarial</h4>
+          <p>Diseño y desarrollo de sitio corporativo con SEO básico y adaptabilidad móvil.</p>
+        </article>
 
-  <section id="proyectos">
-    <h2>Proyectos</h2>
-    <ul>
-      <li>✔️ Sistema de Gestión Académica para instituciones educativas.</li>
-      <li>✔️ Página web moderna para una empresa local.</li>
-      <li>✔️ Aplicación móvil para control de inventario empresarial.</li>
-    </ul>
-  </section>
+        <article class="project-card">
+          <h4>App Inventario (Android)</h4>
+          <p>Aplicación para gestión de inventario con sincronización a servidor y notificaciones.</p>
+        </article>
+      </div>
+    </section>
 
-  <section id="certificados">
-    <h2>Certificados</h2>
-    <p>A continuación puedes acceder a mis certificados profesionales:</p>
-    <ul>
-      <li><a href="#" target="_blank">🔗 Certificado 1 - [Tu link aquí]</a></li>
-      <li><a href="#" target="_blank">🔗 Certificado 2 - [Tu link aquí]</a></li>
-      <li><a href="#" target="_blank">🔗 Certificado 3 - [Tu link aquí]</a></li>
-    </ul>
-  </section>
+    <!-- CERTIFICATES -->
+    <section id="certificados" class="glass">
+      <div class="section-title"><h3>Certificados</h3></div>
+      <p>Puedes añadir los enlaces a tus certificados aquí (Drive / PDF / plataforma). Sustituye los # por tus links.</p>
+      <div class="cert-grid">
+        <div class="cert">
+          <strong>Desarrollo Web</strong>
+          <p>HTML · CSS · JavaScript</p>
+          <a href="#" target="_blank" rel="noopener">Ver certificado</a>
+        </div>
 
-  <section id="contacto">
-    <h2>Contacto</h2>
-    <p>Si deseas colaborar o solicitar más información, puedes escribirme directamente:</p>
-    <form>
-      <input type="text" placeholder="Tu nombre" required>
-      <input type="email" placeholder="Tu correo" required>
-      <textarea rows="4" placeholder="Tu mensaje" required></textarea>
-      <button type="submit">Enviar</button>
-    </form>
-  </section>
+        <div class="cert">
+          <strong>Soporte Técnico</strong>
+          <p>Mantenimiento de equipos</p>
+          <a href="#" target="_blank" rel="noopener">Ver certificado</a>
+        </div>
+
+        <div class="cert">
+          <strong>Ciberseguridad</strong>
+          <p>Buenas prácticas y seguridad básica</p>
+          <a href="#" target="_blank" rel="noopener">Ver certificado</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contacto" class="glass">
+      <div class="section-title"><h3>Contacto</h3></div>
+      <div class="contact-grid">
+        <div>
+          <p>¿Quieres colaborar o solicitar más información? Mándame un correo o completa el formulario.</p>
+          <p>Email: <a href="mailto:manuel@example.com" style="color:var(--accent);text-decoration:underline">manuel@example.com</a></p>
+          <p>GitHub / LinkedIn / Instagram: añade tus links en el nav o aquí.</p>
+        </div>
+
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('Mensaje simulado: listo, Manuel — implementa backend o EmailJS para enviar real.')">
+          <input type="text" placeholder="Tu nombre" required>
+          <input type="email" placeholder="Tu correo" required>
+          <textarea rows="6" placeholder="Tu mensaje" required></textarea>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+            <button type="submit">Enviar</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
 
   <footer>
-    © 2025 José Manuel. Todos los derechos reservados.
+    © 2025 Manuel Garriazo — Todos los derechos reservados.
   </footer>
 
+  <!-- ====================== SCRIPTS ====================== -->
   <script>
-    // Cambiar secciones
-    function mostrarSeccion(id) {
-      document.querySelectorAll("section").forEach(section => {
-        section.classList.remove("active");
-      });
-      document.getElementById(id).classList.add("active");
-    }
+    /* ------------------ Typing effect ------------------ */
+    (function typingEffect(){
+      const el = document.getElementById('typing');
+      const phrases = [
+        'Desarrollador Informático',
+        'Frontend & Backend',
+        'Diseño Web & Apps',
+        'Apasionado por la optimización'
+      ];
+      let p = 0, i = 0, forward = true, wait = 1200;
 
-    // Fondo interactivo RGB que sigue el cursor
-    const fondo = document.getElementById("fondo");
-    document.addEventListener("mousemove", e => {
-      const x = e.clientX / window.innerWidth * 100;
-      const y = e.clientY / window.innerHeight * 100;
-      fondo.style.background = `
-        radial-gradient(circle at ${x}% ${y}%, rgba(0,255,255,0.2), transparent 60%),
-        radial-gradient(circle at ${100 - x}% ${y}%, rgba(0,128,255,0.15), transparent 60%),
-        radial-gradient(circle at ${x / 2}% ${100 - y}%, rgba(255,0,255,0.15), transparent 60%)
-      `;
+      function tick(){
+        const full = phrases[p];
+        if(forward){
+          i++;
+          if(i>full.length){ forward=false; setTimeout(tick, wait); return; }
+        } else {
+          i--;
+          if(i<0){ forward=true; p = (p+1)%phrases.length; }
+        }
+        el.textContent = full.slice(0,i);
+        setTimeout(tick, forward?60:40);
+      }
+      tick();
+    })();
+
+    /* ------------------ Smooth nav scroll (anchor) ------------------ */
+    document.querySelectorAll('nav a').forEach(a=>{
+      a.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        const t = document.querySelector(a.getAttribute('href'));
+        if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+      });
     });
+
+    /* ------------------ Background canvas: blue soft lights following cursor ------------------ */
+    (function bgCanvas(){
+      const canvas = document.getElementById('bgCanvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = innerWidth;
+      let h = canvas.height = innerHeight;
+      let mouse = {x: w/2, y: h/2, vx:0, vy:0};
+      const particles = [];
+      const MAX = 120;
+
+      // keep css radial in sync via CSS vars
+      const bg = document.getElementById('bgCanvas');
+      function setCSSVars(x,y){
+        document.documentElement.style.setProperty('--cx', x + 'px');
+        document.documentElement.style.setProperty('--cy', y + 'px');
+      }
+
+      window.addEventListener('resize', ()=>{ w = canvas.width = innerWidth; h = canvas.height = innerHeight; });
+
+      window.addEventListener('mousemove', (e)=>{
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        setCSSVars(mouse.x, mouse.y);
+        // spawn subtle particles
+        for(let i=0;i<3;i++){
+          if(particles.length < MAX) particles.push({
+            x: mouse.x + (Math.random()-0.5)*30,
+            y: mouse.y + (Math.random()-0.5)*30,
+            r: 8 + Math.random()*18,
+            alpha: 0.45 + Math.random()*0.35,
+            vx: (Math.random()-0.5) * 1.5,
+            vy: (Math.random()-0.5) * 1.5,
+            life: 80 + Math.random()*60
+          });
+        }
+      });
+
+      // gentle automatic drift when idle
+      let idle = false, lastMove = Date.now();
+      setInterval(()=>{ if(Date.now()-lastMove>1500) idle = true; else idle = false; },400);
+
+      // main loop
+      function loop(){
+        ctx.clearRect(0,0,w,h);
+
+        // draw large soft radial (follows cursor but smooth)
+        const gx = mouse.x + (Math.sin(Date.now()*0.0006)*120);
+        const gy = mouse.y + (Math.cos(Date.now()*0.0007)*100);
+        const grd = ctx.createRadialGradient(gx,gy,80,gx,gy,700);
+        grd.addColorStop(0, 'rgba(0,160,255,0.14)');
+        grd.addColorStop(0.3, 'rgba(0,120,200,0.06)');
+        grd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0,0,w,h);
+
+        // draw particles
+        for(let i = particles.length-1; i>=0; i--){
+          const p = particles[i];
+          ctx.beginPath();
+          const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+          g.addColorStop(0, `rgba(0,200,255,${p.alpha})`);
+          g.addColorStop(0.5, `rgba(0,120,200,${p.alpha*0.35})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(p.x-p.r, p.y-p.r, p.r*2, p.r*2);
+          // update
+          p.x += p.vx; p.y += p.vy;
+          p.vx += (Math.random()-0.5)*0.15; p.vy += (Math.random()-0.5)*0.15;
+          p.alpha -= 0.004;
+          p.life--;
+          if(p.alpha<=0 || p.life<=0){ particles.splice(i,1); }
+        }
+
+        // gentle background shimmer lines
+        ctx.beginPath();
+        ctx.lineWidth = 1.1;
+        for(let y = 0; y < h; y += 80){
+          ctx.strokeStyle = `rgba(0,120,200,${0.02 + 0.02*Math.sin((y+Date.now()*0.02)/120)})`;
+          ctx.moveTo(0, y + Math.sin(Date.now()*0.001 + y*0.01)*8);
+          ctx.lineTo(w, y + Math.sin(Date.now()*0.001 + y*0.01)*8);
+        }
+        ctx.stroke();
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+
+    /* ------------------ Accessibility: keyboard anchor focus ------------------ */
+    (function keyboardNav(){
+      document.addEventListener('keydown', e=>{
+        if(e.key === '1') document.querySelector('a[href="#inicio"]').focus();
+        if(e.key === '2') document.querySelector('a[href="#proyectos"]').focus();
+      });
+    })();
+
   </script>
 </body>
 </html>
